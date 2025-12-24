@@ -9,7 +9,7 @@ export type CalendarStackParamList = {
   Home: undefined;
   DayTodos: { date: string };
   AddEditTodo: { date: string; todoId?: number };
-  FocusMode: { duration: number; todoId?: number };
+  FocusMode: { duration: number; todoId?: number; todoDate?: string; todoTime?: string };
 };
 
 const Stack = createNativeStackNavigator<CalendarStackParamList>();

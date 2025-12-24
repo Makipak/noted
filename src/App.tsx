@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import * as Notifications from 'expo-notifications';
 import Navigation from './navigation';
 import { useNavigationContainerRef } from '@react-navigation/native';
@@ -18,33 +18,60 @@ Notifications.setNotificationHandler({
 
 export default function App() {
   const navRef = useNavigationContainerRef<RootStackParamList>();
+  const pendingDeepLink = useRef<any>(null);
 
   useEffect(() => {
-    // Listen for incoming notifications (when app is in foreground)
-    const notificationReceivedSub = Notifications.addNotificationReceivedListener(
-      notification => {
-        // Notification received while app is in foreground
-      }
-    );
-
+    // Handle notification response (user tap notification)
     const sub = Notifications.addNotificationResponseReceivedListener(
       response => {
-        const priority = response.notification.request.content.data?.priority;
-        if (priority === 'high') {
-          navRef.navigate('Main');
+        const data = response.notification.request.content.data;
+        
+        // Check if notification has deep link for focus mode
+        if (data?.todoTime && data?.todoDate) {
+          // Store the deep link data and wait for navigation to be ready
+          pendingDeepLink.current = {
+            duration: 60,
+            todoDate: data.todoDate,
+            todoTime: data.todoTime,
+          };
+
+          // If navigation is ready, navigate immediately
+          if (navRef.isReady()) {
+            navigateToFocusMode(navRef, pendingDeepLink.current);
+            pendingDeepLink.current = null;
+          }
         }
       }
     );
 
-    return () => {
-      notificationReceivedSub.remove();
-      sub.remove();
-    };
-  }, []);
+    return () => sub.remove();
+  }, [navRef]);
+
+  // Handle pending deep link when navigation becomes ready
+  useEffect(() => {
+    if (navRef.isReady() && pendingDeepLink.current) {
+      navigateToFocusMode(navRef, pendingDeepLink.current);
+      pendingDeepLink.current = null;
+    }
+  }, [navRef]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Navigation />
+      <Navigation navigationRef={navRef} />
     </GestureHandlerRootView>
   );
+}
+
+function navigateToFocusMode(navRef: any, params: any) {
+  try {
+    navRef.navigate('Main' as never, {
+      screen: 'Calendar',
+      params: {
+        screen: 'FocusMode',
+        params: params,
+      },
+    } as never);
+  } catch (error) {
+    console.error('❌ Navigation error:', error);
+  }
 }

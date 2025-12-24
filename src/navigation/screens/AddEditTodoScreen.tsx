@@ -15,7 +15,7 @@ export default function AddEditTodoScreen() {
     useNavigation<NativeStackNavigationProp<CalendarStackParamList>>();
 
   const { insertTodo, getTodoById, updateTodo } = useTodos();
-  const { scheduleTodoReminder, requestPermission, cancelNotification } = useNotifications();
+  const { scheduleTodoReminder, scheduleSpacedReminders, requestPermission, cancelNotification } = useNotifications();
 
   const isEdit = route.params?.todoId !== undefined && route.params?.todoId !== null;
 
@@ -74,7 +74,6 @@ export default function AddEditTodoScreen() {
       }
 
       // Schedule new notification if time changed or still need reminder
-      let newNotificationId: string | undefined;
       const todosForTime: Array<{ title: string; priority: string }> = [];
       const allTodos = (global as any).currentDayTodos || [];
       
@@ -90,7 +89,13 @@ export default function AddEditTodoScreen() {
       // Add current todo to the list
       todosForTime.push({ title, priority });
 
-      newNotificationId = await scheduleTodoReminder(hhmm, route.params.date, todosForTime);
+      // Schedule 1 minute before (regular notification)
+      const newNotificationId = await scheduleTodoReminder(hhmm, route.params.date, todosForTime);
+      
+      // For HIGH priority, also schedule deeplink reminders (1min, 6min after)
+      if (priority === 'high') {
+        await scheduleSpacedReminders(hhmm, route.params.date, todosForTime);
+      }
       
       updateTodo({
         id: route.params.todoId,
@@ -116,7 +121,13 @@ export default function AddEditTodoScreen() {
       // Add current todo to the list
       todosForTime.push({ title, priority });
 
+      // Schedule 1 minute before (regular notification)
       const notifId = await scheduleTodoReminder(hhmm, route.params.date, todosForTime);
+      
+      // For HIGH priority, also schedule deeplink reminders (1min, 6min after)
+      if (priority === 'high') {
+        await scheduleSpacedReminders(hhmm, route.params.date, todosForTime);
+      }
       
       await insertTodo({
         title,

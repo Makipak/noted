@@ -86,5 +86,64 @@ export function useNotifications() {
     }
   };
 
-  return { requestPermission, scheduleNotification, scheduleTodoReminder, cancelNotification: Notifications.cancelScheduledNotificationAsync };
+  // Schedule deeplink reminders (1min, 6min after todo time - for deeplink to focus mode)
+  const scheduleSpacedReminders = async (
+    todoTime: string, // format: "HH:MM"
+    todoDate: string, // format: "YYYY-MM-DD"
+    todos: Array<{ title: string; priority: string }>
+  ) => {
+    if (Platform.OS !== 'android') return [];
+
+    try {
+      const [hours, minutes] = todoTime.split(':').map(Number);
+      const [year, month, day] = todoDate.split('-').map(Number);
+      const todoDateTime = new Date(year, month - 1, day, hours, minutes, 0);
+      
+      const reminderIds: string[] = [];
+      const reminderIntervals = [1, 6]; // minutes after todo time (1 min + 5 min later)
+      const todosText = todos
+        .map(t => `[${t.priority.toUpperCase()}] ${t.title}`)
+        .join('\n');
+
+      for (const interval of reminderIntervals) {
+        const reminderDate = new Date(todoDateTime.getTime() + interval * 60000);
+        const now = new Date();
+
+        // Only schedule if future time
+        if (reminderDate > now) {
+          const notificationId = `deeplink_${todoDate}_${todoTime}_${interval}min`;
+          const body = `Reminder: You still have todos at ${todoTime}:\n${todosText}`;
+
+          const result = await scheduleNotification(
+            'Reminder: Focus Mode!',
+            body,
+            reminderDate,
+            { 
+              todoDate, 
+              todoTime,
+              deepLink: `todolistapp://focusmode?todoTime=${todoTime}&todoDate=${todoDate}`,
+            },
+            notificationId
+          );
+
+          if (result) {
+            reminderIds.push(result);
+          }
+        }
+      }
+
+      return reminderIds;
+    } catch (error) {
+      console.error('❌ Error scheduling deeplink reminders:', error);
+      return [];
+    }
+  };
+
+  return { 
+    requestPermission, 
+    scheduleNotification, 
+    scheduleTodoReminder, 
+    scheduleSpacedReminders,
+    cancelNotification: Notifications.cancelScheduledNotificationAsync 
+  };
 }

@@ -1,9 +1,9 @@
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import RootNavigator from './RootNavigator';
 
-export default function Navigation() {
+export default function Navigation({ navigationRef }: { navigationRef: any }) {
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <RootNavigator />
     </NavigationContainer>
   );
