@@ -36,7 +36,7 @@ function CalendarStack() {
       <Stack.Screen
         name="AddEditTodo"
         component={AddEditTodoScreen}
-        options={{ title: 'Add Todo' }}
+        options={{ title: 'Todo' }}
       />
       <Stack.Screen
         name="FocusMode"

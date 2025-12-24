@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Colors from '../../constants/Colors';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { CalendarStackParamList } from '../CalendarStack';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function FocusModeScreen() {
   const route =
@@ -25,11 +26,11 @@ export default function FocusModeScreen() {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom', 'left', 'right']}>
       <Text style={styles.title}>Focus Mode</Text>
       <Text style={styles.timer}>{seconds}s</Text>
       <Text style={styles.desc}>Stay focused 👀</Text>
-    </View>
+    </SafeAreaView>
   );
 }
 

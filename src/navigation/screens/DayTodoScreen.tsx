@@ -12,13 +12,14 @@ import TodoItem from '../../components/TodoItem';
 import Colors from '../../constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function DayTodoScreen() {
   const route = useRoute<RouteProp<CalendarStackParamList, 'DayTodos'>>();
   const navigation =
     useNavigation<NativeStackNavigationProp<CalendarStackParamList>>();
 
-  const { fetchTodosByDate, toggleTodo } = useTodos();
+  const { fetchTodosByDate, toggleTodo, deleteTodo } = useTodos();
   const [todos, setTodos] = useState<any[]>([]);
 
   useFocusEffect(
@@ -28,10 +29,11 @@ export default function DayTodoScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['left', 'right']}>
       <FlatList
         data={todos}
         keyExtractor={item => item.id.toString()}
+        contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
           <TodoItem
             title={item.title}
@@ -48,6 +50,16 @@ export default function DayTodoScreen() {
                 )
               );
             }}
+            onEdit={() =>
+              navigation.navigate('AddEditTodo', {
+                date: route.params.date,
+                todoId: item.id,
+              })
+            }
+            onDelete={() => {
+              deleteTodo(item.id);
+              setTodos(prev => prev.filter(t => t.id !== item.id));
+            }}
           />
         )}
         ListEmptyComponent={
@@ -63,15 +75,19 @@ export default function DayTodoScreen() {
       >
         <Ionicons name="add" size={28} color="#fff" />
       </Pressable>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 8,
     backgroundColor: Colors.background,
+  },
+  listContent: {
+    paddingBottom: 96,
   },
   empty: {
     textAlign: 'center',

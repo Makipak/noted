@@ -1,18 +1,21 @@
 import { View, TextInput, Pressable, Text, StyleSheet } from 'react-native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigation, RouteProp, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalendarStackParamList } from '../CalendarStack';
 import { useTodos } from '../../hooks/useTodos';
 import Colors from '../../constants/Colors';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function AddEditTodoScreen() {
   const route = useRoute<RouteProp<CalendarStackParamList, 'AddEditTodo'>>();
   const navigation =
     useNavigation<NativeStackNavigationProp<CalendarStackParamList>>();
 
-  const { insertTodo } = useTodos();
+  const { insertTodo, getTodoById, updateTodo } = useTodos();
+
+  const isEdit = route.params?.todoId != null;
 
   const [title, setTitle] = useState('');
   const [time, setTime] = useState(new Date());
@@ -20,6 +23,35 @@ export default function AddEditTodoScreen() {
   const [priority, setPriority] = useState<'low' | 'normal' | 'high'>(
     'normal'
   );
+
+  // Prefill data when editing
+  useEffect(() => {
+    if (!isEdit || !route.params.todoId) return;
+    const todo = getTodoById(route.params.todoId);
+    if (!todo) return;
+
+    setTitle(todo.title);
+    // parse time "HH:MM"
+    if (todo.todo_time) {
+      const now = new Date();
+      const [h, m] = todo.todo_time.split(':').map(Number);
+      const dt = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        h || 0,
+        m || 0
+      );
+      setTime(dt);
+    }
+    if (
+      todo.priority === 'low' ||
+      todo.priority === 'normal' ||
+      todo.priority === 'high'
+    ) {
+      setPriority(todo.priority);
+    }
+  }, [isEdit, route.params.todoId, getTodoById]);
 
   const handleSave = async () => {
     if (!title.trim()) return;
@@ -29,18 +61,27 @@ export default function AddEditTodoScreen() {
       minute: '2-digit',
     });
 
-    await insertTodo({
-      title,
-      date: route.params.date,
-      time: hhmm,
-      priority,
-    });
+    if (isEdit && route.params.todoId) {
+      updateTodo({
+        id: route.params.todoId,
+        title,
+        time: hhmm,
+        priority,
+      });
+    } else {
+      await insertTodo({
+        title,
+        date: route.params.date,
+        time: hhmm,
+        priority,
+      });
+    }
 
     navigation.goBack();
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <TextInput
         placeholder="Apa yang ingin kamu lakukan?"
         style={styles.input}
@@ -86,7 +127,7 @@ export default function AddEditTodoScreen() {
       <Pressable style={styles.saveBtn} onPress={handleSave}>
         <Text style={styles.saveText}>Save Todo</Text>
       </Pressable>
-    </View>
+    </SafeAreaView>
   );
 }
 

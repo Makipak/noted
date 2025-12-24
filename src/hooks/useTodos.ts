@@ -1,4 +1,5 @@
 import * as SQLite from 'expo-sqlite';
+import { useMemo } from 'react';
 
 export type Todo = {
   id: number;
@@ -6,6 +7,12 @@ export type Todo = {
   todo_date: string;
   todo_time: string;
   priority: string;
+  completed: number;
+};
+
+export type TodoSummary = {
+  date: string;
+  total: number;
   completed: number;
 };
 
@@ -61,12 +68,74 @@ export function useTodos() {
     );
   };
 
+  // 🔹 DAILY SUMMARY (for calendar + stats)
+  const getDailySummary = (): TodoSummary[] => {
+    const rows = db.getAllSync<{
+      todo_date: string;
+      total: number;
+      completed: number;
+    }>(
+      `
+      SELECT
+        todo_date,
+        COUNT(*) as total,
+        SUM(CASE WHEN completed = 1 THEN 1 ELSE 0 END) as completed
+      FROM todos
+      GROUP BY todo_date
+      ORDER BY todo_date DESC;
+    `
+    );
+
+    return rows.map(row => ({
+      date: row.todo_date,
+      total: row.total,
+      completed: row.completed ?? 0,
+    }));
+  };
+
+  // 🔹 GET ONE
+  const getTodoById = (id: number): Todo | null => {
+    const row = db.getFirstSync<Todo>(
+      `SELECT * FROM todos WHERE id = ? LIMIT 1`,
+      [id]
+    );
+    return row ?? null;
+  };
+
+  // 🔹 UPDATE
+  const updateTodo = (todo: {
+    id: number;
+    title: string;
+    time: string;
+    priority: string;
+  }) => {
+    db.runSync(
+      `UPDATE todos
+       SET title = ?, todo_time = ?, priority = ?
+       WHERE id = ?`,
+      [todo.title, todo.time, todo.priority, todo.id]
+    );
+  };
+
+  // 🔹 DELETE
+  const deleteTodo = (id: number) => {
+    db.runSync(`DELETE FROM todos WHERE id = ?`, [id]);
+  };
+
   // 🔹 INIT ONCE
   initDB();
 
-  return {
-    fetchTodosByDate,
-    insertTodo,
-    toggleTodo,
-  };
+  // memoize so callers get stable references (avoids effect loops)
+  return useMemo(
+    () => ({
+      fetchTodosByDate,
+      insertTodo,
+      toggleTodo,
+      getDailySummary,
+      getTodoById,
+      updateTodo,
+      deleteTodo,
+    }),
+    []
+  );
 }

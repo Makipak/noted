@@ -3,6 +3,7 @@ import * as Notifications from 'expo-notifications';
 import Navigation from './navigation';
 import { useNavigationContainerRef } from '@react-navigation/native';
 import type { RootStackParamList } from './navigation/RootNavigator';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function App() {
   const navRef = useNavigationContainerRef<RootStackParamList>();
@@ -20,5 +21,9 @@ export default function App() {
     return () => sub.remove();
   }, []);
 
-  return <Navigation />;
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Navigation />
+    </GestureHandlerRootView>
+  );
 }

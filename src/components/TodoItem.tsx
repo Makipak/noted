@@ -1,6 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
+import { Swipeable } from 'react-native-gesture-handler';
 
 type Props = {
   title: string;
@@ -8,6 +9,8 @@ type Props = {
   priority: string;
   completed: boolean;
   onToggle: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 };
 
 export default function TodoItem({
@@ -16,47 +19,64 @@ export default function TodoItem({
   priority,
   completed,
   onToggle,
+  onEdit,
+  onDelete,
 }: Props) {
   return (
-    <Pressable
-      onPress={onToggle}
-      style={({ pressed }) => [
-        styles.card,
-        pressed && { transform: [{ scale: 0.98 }] },
-        completed && styles.cardCompleted,
-      ]}
+    <Swipeable
+      enabled={Boolean(onEdit || onDelete)}
+      renderRightActions={() =>
+        (onEdit || onDelete) && (
+          <View style={styles.actionsContainer}>
+            {onEdit && (
+              <Pressable style={[styles.actionBtn, styles.editBtn]} onPress={onEdit}>
+                <Ionicons name="pencil-outline" size={18} color="#fff" />
+                <Text style={styles.actionText}>Edit</Text>
+              </Pressable>
+            )}
+            {onDelete && (
+              <Pressable
+                style={[styles.actionBtn, styles.deleteBtn]}
+                onPress={onDelete}
+              >
+                <Ionicons name="trash-outline" size={18} color="#fff" />
+                <Text style={styles.actionText}>Hapus</Text>
+              </Pressable>
+            )}
+          </View>
+        )
+      }
     >
-      {/* CHECKBOX */}
-      <Ionicons
-        name={completed ? 'checkmark-circle' : 'ellipse-outline'}
-        size={22}
-        color={completed ? Colors.primary : Colors.textSecondary}
-        style={styles.checkbox}
-      />
+      <View style={[styles.card, completed && styles.cardCompleted]}>
+        {/* LEFT: TOGGLE */}
+        <Pressable onPress={onToggle} style={styles.checkboxPress}>
+          <Ionicons
+            name={completed ? 'checkmark-circle' : 'ellipse-outline'}
+            size={22}
+            color={completed ? Colors.primary : Colors.textSecondary}
+            style={styles.checkbox}
+          />
+        </Pressable>
 
-      {/* CONTENT */}
-      <View style={styles.content}>
-        <Text
-          numberOfLines={1}
-          style={[
-            styles.title,
-            completed && styles.titleCompleted,
-          ]}
-        >
-          {title}
-        </Text>
+        {/* CONTENT */}
+        <View style={styles.content}>
+          <Text
+            numberOfLines={1}
+            style={[styles.title, completed && styles.titleCompleted]}
+          >
+            {title}
+          </Text>
 
-        <View style={styles.metaRow}>
-          <Text style={styles.time}>⏰ {time}</Text>
+          <View style={styles.metaRow}>
+            <Text style={styles.time}>{time}</Text>
 
-          <View style={styles.priorityBadge}>
-            <Text style={styles.priorityText}>
-              {priority.toUpperCase()}
-            </Text>
+            <View style={styles.priorityBadge}>
+              <Text style={styles.priorityText}>{priority.toUpperCase()}</Text>
+            </View>
           </View>
         </View>
       </View>
-    </Pressable>
+    </Swipeable>
   );
 }
 
@@ -81,6 +101,9 @@ const styles = StyleSheet.create({
   },
   cardCompleted: {
     opacity: 0.45,
+  },
+  checkboxPress: {
+    paddingRight: 8,
   },
   checkbox: {
     marginRight: 14,
@@ -118,5 +141,36 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: Colors.primary,
     letterSpacing: 0.4,
+  },
+  actions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  actionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 6,
+    marginRight: 8,
+  },
+  actionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    marginLeft: 8,
+  },
+  editBtn: {
+    backgroundColor: Colors.textSecondary,
+  },
+  deleteBtn: {
+    backgroundColor: Colors.danger,
+  },
+  actionText: {
+    color: '#fff',
+    marginLeft: 4,
+    fontSize: 12,
+    fontWeight: '600',
   },
 });

@@ -1,12 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native';
 import Colors from '../../constants/Colors';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SettingsScreen() {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <Text style={styles.title}>Settings</Text>
       <Text>Focus duration: 60 seconds</Text>
-    </View>
+    </SafeAreaView>
   );
 }
 
