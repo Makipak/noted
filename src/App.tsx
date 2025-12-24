@@ -64,12 +64,10 @@ export default function App() {
 
 function navigateToFocusMode(navRef: any, params: any) {
   try {
-    navRef.navigate('Main' as never, {
-      screen: 'Calendar',
-      params: {
-        screen: 'FocusMode',
-        params: params,
-      },
+    navRef.navigate('FocusMode' as never, {
+      duration: params.duration || 60,
+      todoDate: params.todoDate,
+      todoTime: params.todoTime,
     } as never);
   } catch (error) {
     console.error('❌ Navigation error:', error);
