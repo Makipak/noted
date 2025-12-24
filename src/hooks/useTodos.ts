@@ -137,6 +137,25 @@ export function useTodos() {
     db.runSync(`DELETE FROM todos WHERE id = ?`, [id]);
   };
 
+  // 🔹 GET OVERDUE HIGH PRIORITY TODOS
+  const getOverdueHighPriorityTodos = (): Todo[] => {
+    const now = new Date();
+    const currentDateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const currentTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    const result = db.getAllSync<Todo>(
+      `SELECT * FROM todos 
+       WHERE priority = 'high' 
+       AND completed = 0
+       AND todo_date = ?
+       AND todo_time <= ?
+       ORDER BY todo_time ASC`,
+      [currentDateStr, currentTimeStr]
+    );
+    
+    return result || [];
+  };
+
   // 🔹 INIT ONCE
   initDB();
 
@@ -150,6 +169,7 @@ export function useTodos() {
       getTodoById,
       updateTodo,
       deleteTodo,
+      getOverdueHighPriorityTodos,
     }),
     []
   );
