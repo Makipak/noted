@@ -5,6 +5,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalendarStackParamList } from '../CalendarStack';
 import { useTodos } from '../../hooks/useTodos';
+import { useNotifications } from '../../hooks/useNotifications';
 import Colors from '../../constants/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -14,8 +15,9 @@ export default function AddEditTodoScreen() {
     useNavigation<NativeStackNavigationProp<CalendarStackParamList>>();
 
   const { insertTodo, getTodoById, updateTodo } = useTodos();
+  const { scheduleTodoReminder, requestPermission, cancelNotification } = useNotifications();
 
-  const isEdit = route.params?.todoId != null;
+  const isEdit = route.params?.todoId !== undefined && route.params?.todoId !== null;
 
   const [title, setTitle] = useState('');
   const [time, setTime] = useState(new Date());
@@ -56,24 +58,72 @@ export default function AddEditTodoScreen() {
   const handleSave = async () => {
     if (!title.trim()) return;
 
-    const hhmm = time.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    // Format time consistently as HH:MM
+    const hours = String(time.getHours()).padStart(2, '0');
+    const minutes = String(time.getMinutes()).padStart(2, '0');
+    const hhmm = `${hours}:${minutes}`;
+
+    // Request notification permission first
+    await requestPermission();
 
     if (isEdit && route.params.todoId) {
+      // Get old todo to check if time changed
+      const oldTodo = getTodoById(route.params.todoId);
+      if (oldTodo?.notification_id) {
+        await cancelNotification(oldTodo.notification_id);
+      }
+
+      // Schedule new notification if time changed or still need reminder
+      let newNotificationId: string | undefined;
+      const todosForTime: Array<{ title: string; priority: string }> = [];
+      const allTodos = (global as any).currentDayTodos || [];
+      
+      allTodos.forEach((todo: any) => {
+        if (todo.todo_time === hhmm && todo.id !== route.params.todoId) {
+          todosForTime.push({
+            title: todo.title,
+            priority: todo.priority,
+          });
+        }
+      });
+      
+      // Add current todo to the list
+      todosForTime.push({ title, priority });
+
+      newNotificationId = await scheduleTodoReminder(hhmm, route.params.date, todosForTime);
+      
       updateTodo({
         id: route.params.todoId,
         title,
         time: hhmm,
         priority,
+        notificationId: newNotificationId,
       });
     } else {
+      // Schedule reminder 1 minute before
+      const todosForTime: Array<{ title: string; priority: string }> = [];
+      const allTodos = (global as any).currentDayTodos || [];
+      
+      allTodos.forEach((todo: any) => {
+        if (todo.todo_time === hhmm) {
+          todosForTime.push({
+            title: todo.title,
+            priority: todo.priority,
+          });
+        }
+      });
+      
+      // Add current todo to the list
+      todosForTime.push({ title, priority });
+
+      const notifId = await scheduleTodoReminder(hhmm, route.params.date, todosForTime);
+      
       await insertTodo({
         title,
         date: route.params.date,
         time: hhmm,
         priority,
+        notificationId: notifId,
       });
     }
 

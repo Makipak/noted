@@ -11,7 +11,7 @@ import { useTodos } from '../../hooks/useTodos';
 import TodoItem from '../../components/TodoItem';
 import Colors from '../../constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function DayTodoScreen() {
@@ -25,8 +25,13 @@ export default function DayTodoScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchTodosByDate(route.params.date, setTodos);
-    }, [route.params.date])
+    }, [route.params.date, fetchTodosByDate])
   );
+
+  // Store todos in global state whenever they change
+  useEffect(() => {
+    (global as any).currentDayTodos = todos;
+  }, [todos]);
 
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right']}>

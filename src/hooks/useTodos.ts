@@ -8,6 +8,7 @@ export type Todo = {
   todo_time: string;
   priority: string;
   completed: number;
+  notification_id?: string;
 };
 
 export type TodoSummary = {
@@ -22,16 +23,28 @@ const db = SQLite.openDatabaseSync('todos.db');
 export function useTodos() {
   // 🔹 INIT DB
   const initDB = () => {
-    db.execSync(`
-      CREATE TABLE IF NOT EXISTS todos (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT NOT NULL,
-        todo_date TEXT NOT NULL,
-        todo_time TEXT,
-        priority TEXT,
-        completed INTEGER
-      );
-    `);
+    try {
+      db.execSync(`
+        CREATE TABLE IF NOT EXISTS todos (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT NOT NULL,
+          todo_date TEXT NOT NULL,
+          todo_time TEXT,
+          priority TEXT,
+          completed INTEGER,
+          notification_id TEXT
+        );
+      `);
+
+      // Add notification_id column if it doesn't exist (for existing tables)
+      try {
+        db.execSync(`ALTER TABLE todos ADD COLUMN notification_id TEXT;`);
+      } catch (err) {
+        // Column already exists, ignore error
+      }
+    } catch (error) {
+      console.error('❌ Error initializing database:', error);
+    }
   };
 
   // 🔹 FETCH
@@ -52,11 +65,12 @@ export function useTodos() {
     date: string;
     time: string;
     priority: string;
+    notificationId?: string;
   }) => {
     db.runSync(
-      `INSERT INTO todos (title, todo_date, todo_time, priority, completed)
-       VALUES (?, ?, ?, ?, 0)`,
-      [todo.title, todo.date, todo.time, todo.priority]
+      `INSERT INTO todos (title, todo_date, todo_time, priority, completed, notification_id)
+       VALUES (?, ?, ?, ?, 0, ?)`,
+      [todo.title, todo.date, todo.time, todo.priority, todo.notificationId || null]
     );
   };
 
@@ -108,12 +122,13 @@ export function useTodos() {
     title: string;
     time: string;
     priority: string;
+    notificationId?: string;
   }) => {
     db.runSync(
       `UPDATE todos
-       SET title = ?, todo_time = ?, priority = ?
+       SET title = ?, todo_time = ?, priority = ?, notification_id = ?
        WHERE id = ?`,
-      [todo.title, todo.time, todo.priority, todo.id]
+      [todo.title, todo.time, todo.priority, todo.notificationId || null, todo.id]
     );
   };
 

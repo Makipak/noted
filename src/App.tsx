@@ -5,10 +5,28 @@ import { useNavigationContainerRef } from '@react-navigation/native';
 import type { RootStackParamList } from './navigation/RootNavigator';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+// Configure how notifications are handled when app is in foreground
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
 export default function App() {
   const navRef = useNavigationContainerRef<RootStackParamList>();
 
   useEffect(() => {
+    // Listen for incoming notifications (when app is in foreground)
+    const notificationReceivedSub = Notifications.addNotificationReceivedListener(
+      notification => {
+        // Notification received while app is in foreground
+      }
+    );
+
     const sub = Notifications.addNotificationResponseReceivedListener(
       response => {
         const priority = response.notification.request.content.data?.priority;
@@ -18,7 +36,10 @@ export default function App() {
       }
     );
 
-    return () => sub.remove();
+    return () => {
+      notificationReceivedSub.remove();
+      sub.remove();
+    };
   }, []);
 
   return (

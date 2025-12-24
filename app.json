@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "src/assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.x4h4n5.todolistapp"
     },
     "web": {
       "favicon": "src/assets/images/favicon.png"
@@ -30,6 +31,11 @@
         }
       ],
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "9b65e2eb-c0a9-4b81-aca0-deed0ac1e730"
+      }
+    }
   }
 }

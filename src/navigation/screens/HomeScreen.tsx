@@ -15,7 +15,17 @@ export default function HomeScreen() {
   const { getDailySummary } = useTodos();
 
   const [summaries, setSummaries] = useState<Record<string, TodoSummary>>({});
-  const todayStr = new Date().toISOString().split('T')[0];
+  
+  // Helper function to get today's date in local timezone (YYYY-MM-DD)
+  const getTodayLocalDate = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
+  const [todayStr, setTodayStr] = useState(getTodayLocalDate());
 
   const loadSummaries = useCallback(() => {
     const data = getDailySummary();
@@ -28,6 +38,9 @@ export default function HomeScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      // Update today's date when screen is focused
+      const today = getTodayLocalDate();
+      setTodayStr(today);
       loadSummaries();
     }, [loadSummaries])
   );
