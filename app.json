@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "todolist-app",
+    "name": "Noted",
     "slug": "todolist-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "src/assets/images/icon.png",
+    "icon": "src/assets/images/logo.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "scheme": "todolistapp",
@@ -13,13 +13,13 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "src/assets/images/adaptive-icon.png",
+        "foregroundImage": "src/assets/images/logo.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.x4h4n5.todolistapp"
     },
     "web": {
-      "favicon": "src/assets/images/favicon.png"
+      "favicon": "src/assets/images/logo.png"
     },
     "plugins": [
       "expo-asset",
@@ -27,7 +27,7 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#ffffff",
-          "image": "src/assets/images/splash-icon.png"
+          "image": "src/assets/images/logo.png"
         }
       ],
       "@react-native-community/datetimepicker"
