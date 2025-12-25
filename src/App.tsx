@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as Notifications from 'expo-notifications';
 import Navigation from './navigation';
-import { useNavigationContainerRef } from '@react-navigation/native';
+import { useNavigationContainerRef, CommonActions } from '@react-navigation/native';
 import type { RootStackParamList } from './navigation/RootNavigator';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -19,6 +19,7 @@ Notifications.setNotificationHandler({
 export default function App() {
   const navRef = useNavigationContainerRef<RootStackParamList>();
   const pendingDeepLink = useRef<any>(null);
+  const navigationReadyRef = useRef(false);
 
   useEffect(() => {
     // Handle notification response (user tap notification)
@@ -36,7 +37,7 @@ export default function App() {
           };
 
           // If navigation is ready, navigate immediately
-          if (navRef.isReady()) {
+          if (navigationReadyRef.current && navRef.isReady()) {
             navigateToFocusMode(navRef, pendingDeepLink.current);
             pendingDeepLink.current = null;
           }
@@ -45,30 +46,41 @@ export default function App() {
     );
 
     return () => sub.remove();
-  }, [navRef]);
+  }, []);
 
   // Handle pending deep link when navigation becomes ready
   useEffect(() => {
-    if (navRef.isReady() && pendingDeepLink.current) {
-      navigateToFocusMode(navRef, pendingDeepLink.current);
-      pendingDeepLink.current = null;
-    }
+    const checkNavReady = setTimeout(() => {
+      navigationReadyRef.current = navRef.isReady();
+      if (navigationReadyRef.current && pendingDeepLink.current) {
+        navigateToFocusMode(navRef, pendingDeepLink.current);
+        pendingDeepLink.current = null;
+      }
+    }, 500);
+
+    return () => clearTimeout(checkNavReady);
   }, [navRef]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Navigation navigationRef={navRef} />
+      <Navigation navigationRef={navRef} onReady={() => { navigationReadyRef.current = true; }} />
     </GestureHandlerRootView>
   );
 }
 
 function navigateToFocusMode(navRef: any, params: any) {
   try {
-    navRef.navigate('FocusMode' as never, {
-      duration: params.duration || 60,
-      todoDate: params.todoDate,
-      todoTime: params.todoTime,
-    } as never);
+    // Use dispatch with proper reset to ensure FocusMode opens directly
+    navRef.dispatch(
+      CommonActions.navigate({
+        name: 'FocusMode',
+        params: {
+          duration: params.duration || 60,
+          todoDate: params.todoDate,
+          todoTime: params.todoTime,
+        },
+      })
+    );
   } catch (error) {
     console.error('❌ Navigation error:', error);
   }

@@ -1,9 +1,12 @@
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from 'react';
 
 export default function SettingsScreen() {
+  const [copyrightName, setCopyrightName] = useState('');
+
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
@@ -75,6 +78,27 @@ export default function SettingsScreen() {
                 <Text style={styles.settingValue}>1.0.0</Text>
               </View>
             </View>
+          </View>
+        </View>
+
+        {/* Copyright Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Copyright</Text>
+          
+          <View style={styles.copyrightContainer}>
+            <Text style={styles.copyrightLabel}>Copyright Owner Name</Text>
+            <TextInput
+              style={styles.copyrightInput}
+              placeholder="Enter your name"
+              placeholderTextColor={Colors.textSecondary}
+              value={copyrightName}
+              onChangeText={setCopyrightName}
+            />
+            {copyrightName ? (
+              <Text style={styles.copyrightPreview}>
+                © {new Date().getFullYear()} {copyrightName}. All rights reserved.
+              </Text>
+            ) : null}
           </View>
         </View>
 
@@ -179,5 +203,39 @@ const styles = StyleSheet.create({
   },
   dangerText: {
     color: '#f44336',
+  },
+  copyrightContainer: {
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    backgroundColor: Colors.card,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  copyrightLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: Colors.textPrimary,
+    marginBottom: 8,
+  },
+  copyrightInput: {
+    backgroundColor: Colors.background,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 16,
+    color: Colors.textPrimary,
+    marginBottom: 8,
+  },
+  copyrightPreview: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    fontStyle: 'italic',
+    marginTop: 8,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
   },
 });
