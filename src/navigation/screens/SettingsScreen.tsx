@@ -1,11 +1,9 @@
-import { View, Text, StyleSheet, ScrollView, Pressable, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
 
 export default function SettingsScreen() {
-  const [copyrightName, setCopyrightName] = useState('');
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
@@ -86,19 +84,9 @@ export default function SettingsScreen() {
           <Text style={styles.sectionTitle}>Copyright</Text>
           
           <View style={styles.copyrightContainer}>
-            <Text style={styles.copyrightLabel}>Copyright Owner Name</Text>
-            <TextInput
-              style={styles.copyrightInput}
-              placeholder="Enter your name"
-              placeholderTextColor={Colors.textSecondary}
-              value={copyrightName}
-              onChangeText={setCopyrightName}
-            />
-            {copyrightName ? (
-              <Text style={styles.copyrightPreview}>
-                © {new Date().getFullYear()} {copyrightName}. All rights reserved.
-              </Text>
-            ) : null}
+            <Text style={styles.copyrightPreview}>
+              © {new Date().getFullYear()} Makipak. All rights reserved.
+            </Text>
           </View>
         </View>
 
