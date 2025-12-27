@@ -1,61 +1,65 @@
-# Starter Template with React Navigation
+# TodoList App
 
-This is a minimal starter template for React Native apps using Expo and React Navigation.
+A feature-rich TodoList application built with React Native and Expo. This app helps you organize your tasks, stay focused, and track your productivity.
 
-## Launch your own
+## ✨ Features
 
-[![Launch with Expo](https://github.com/expo/examples/blob/master/.gh-assets/launch.svg?raw=true)](https://launch.expo.dev/?github=https://github.com/expo/examples/tree/master/with-react-navigation)
+- **Task Management**: Full CRUD (Create, Read, Update, Delete) functionality for your todos.
+- **Priorities**: Assign priorities to your tasks to better organize your workload.
+- **Calendar View**: See your tasks for any given day using the integrated calendar.
+- **Focus Mode**: A dedicated timer screen to help you concentrate on a specific task without distractions.
+- **Statistics**: Track your completed tasks and productivity over time.
+- **Notifications**: Get reminders for your tasks.
 
-It includes the following:
+## 🚀 Getting Started
 
-- Example [Native Stack](https://reactnavigation.org/docs/native-stack-navigator) with a nested [Bottom Tab](https://reactnavigation.org/docs/bottom-tab-navigator)
-- Web support with [React Native for Web](https://necolas.github.io/react-native-web/)
-- TypeScript support and configured for React Navigation
-- Automatic [deep link](https://reactnavigation.org/docs/deep-linking) and [URL handling configuration](https://reactnavigation.org/docs/configuring-links)
-- Theme support [based on system appearance](https://reactnavigation.org/docs/themes/#using-the-operating-system-preferences)
-- Expo [Development Build](https://docs.expo.dev/develop/development-builds/introduction/) with [Continuous Native Generation](https://docs.expo.dev/workflow/continuous-native-generation/)
-- Edge-to-edge configured on Android with [`react-native-edge-to-edge`](https://www.npmjs.com/package/react-native-edge-to-edge)
+To get a local copy up and running, follow these simple steps.
 
-## Getting Started
+### Prerequisites
 
-1. Create a new project using this template:
+- Node.js
+- npm or yarn
+- Expo Go app on your mobile device or an Android/iOS emulator.
 
+### Installation & Running
+
+1. **Clone the repository:**
    ```sh
-   npx create-expo-app --example with-react-navigation
-   yarn create expo-app --example with-react-navigation
-   pnpm create expo-app --example with-react-navigation
-   bun create expo-app --example with-react-navigation
+   git clone https://github.com/your-username/your-repository-name.git
    ```
+2. **Navigate to the project directory:**
+   ```sh
+   cd todolist-app
+   ```
+3. **Install dependencies:**
+   ```sh
+   npm install
+   ```
+   or if you prefer yarn:
+   ```sh
+   yarn install
+   ```
+4. **Start the development server:**
+   ```sh
+   npm start
+   ```
+   or
+   ```sh
+   npx expo start
+   ```
+5. **Run the app:**
+   - Scan the QR code with the Expo Go app on your phone.
+   - Or, run on an emulator:
+     - Press `a` for Android.
+     - Press `i` for iOS.
 
-## Running the app
+## 📱 APK Download
 
-- Install the dependencies:
+A pre-built APK for Android is available for download from the [**GitHub Releases**](https://github.com/your-username/your-repository-name/releases) page of this repository.
 
-  ```sh
-  npx expo install
-  ```
+## 🛠️ Built With
 
-- Start the development server:
-
-  ```sh
-  npx expo start
-  ```
-
-- Build and run iOS and Android development builds:
-
-  ```sh
-  npm run ios
-  # or
-  npm run android
-  ```
-
-- In the terminal running the development server, press `i` to open the iOS simulator, `a` to open the Android device or emulator, or `w` to open the web browser.
-
-## Resources
-
-- [React Navigation documentation](https://reactnavigation.org/)
-- [Expo documentation](https://docs.expo.dev/)
-
----
-
-Demo assets are from [lucide.dev](https://lucide.dev/)
+- [React Native](https://reactnative.dev/)
+- [Expo](https://expo.dev/)
+- [React Navigation](https://reactnavigation.org/)
+- [TypeScript](https://www.typescriptlang.org/)
