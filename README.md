@@ -1,63 +1,63 @@
-# TodoList App
+# Noted
 
-A feature-rich TodoList application built with React Native and Expo. This app helps you organize your tasks, stay focused, and track your productivity.
+Sebuah aplikasi TodoList kaya fitur yang dibangun dengan React Native dan Expo. Aplikasi ini membantu Anda mengatur tugas, tetap fokus, dan melacak produktivitas Anda.
 
-## ✨ Features
+## ✨ Fitur
 
-- **Task Management**: Full CRUD (Create, Read, Update, Delete) functionality for your todos.
-- **Priorities**: Assign priorities to your tasks to better organize your workload.
-- **Calendar View**: See your tasks for any given day using the integrated calendar.
-- **Focus Mode**: A dedicated timer screen to help you concentrate on a specific task without distractions.
-- **Statistics**: Track your completed tasks and productivity over time.
-- **Notifications**: Get reminders for your tasks.
+- **Manajemen Tugas**: Fungsionalitas penuh CRUD (Create, Read, Update, Delete) untuk todo Anda.
+- **Prioritas**: Tetapkan prioritas untuk tugas Anda agar beban kerja lebih terorganisir.
+- **Tampilan Kalender**: Lihat tugas Anda untuk hari apa pun menggunakan kalender yang terintegrasi.
+- **Mode Fokus**: Layar pengatur waktu khusus untuk membantu Anda berkonsentrasi pada tugas tertentu tanpa gangguan.
+- **Statistik**: Lacak tugas yang telah selesai dan produktivitas Anda dari waktu ke waktu.
+- **Notifikasi**: Dapatkan pengingat untuk tugas-tugas Anda.
 
-## 🚀 Getting Started
+## 🚀 Memulai
 
-To get a local copy up and running, follow these simple steps.
+Untuk menjalankan salinan lokal, ikuti langkah-langkah sederhana ini.
 
-### Prerequisites
+### Prasyarat
 
 - Node.js
-- npm or yarn
-- Expo Go app on your mobile device or an Android/iOS emulator.
+- npm atau yarn
+- Aplikasi Expo Go di perangkat seluler Anda atau emulator Android/iOS.
 
-### Installation & Running
+### Instalasi & Menjalankan
 
-1. **Clone the repository:**
+1. **Clone repositori:**
    ```sh
    git clone https://github.com/your-username/your-repository-name.git
    ```
-2. **Navigate to the project directory:**
+2. **Masuk ke direktori proyek:**
    ```sh
    cd todolist-app
    ```
-3. **Install dependencies:**
+3. **Instal dependensi:**
    ```sh
    npm install
    ```
-   or if you prefer yarn:
+   atau jika Anda lebih suka yarn:
    ```sh
    yarn install
    ```
-4. **Start the development server:**
+4. **Mulai server pengembangan:**
    ```sh
    npm start
    ```
-   or
+   atau
    ```sh
    npx expo start
    ```
-5. **Run the app:**
-   - Scan the QR code with the Expo Go app on your phone.
-   - Or, run on an emulator:
-     - Press `a` for Android.
-     - Press `i` for iOS.
+5. **Jalankan aplikasi:**
+   - Pindai kode QR dengan aplikasi Expo Go di ponsel Anda.
+   - Atau, jalankan di emulator:
+     - Tekan `a` untuk Android.
+     - Tekan `i` untuk iOS.
 
-## 📱 APK Download
+## 📱 Unduh APK
 
-A pre-built APK for Android is available for download from the [**GitHub Releases**](https://github.com/your-username/your-repository-name/releases) page of this repository.
+APK yang sudah jadi untuk Android tersedia untuk diunduh dari halaman [**Rilis GitHub**](https://github.com/your-username/your-repository-name/releases) repositori ini.
 
-## 🛠️ Built With
+## 🛠️ Dibangun Dengan
 
 - [React Native](https://reactnative.dev/)
 - [Expo](https://expo.dev/)
